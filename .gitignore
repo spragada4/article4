@@ -1,0 +1,16 @@
+.env
+*.env.local
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+data/raw/
+data/processed/
+*.jsonl
+*.sqlite
+*.db
+node_modules/
+.DS_Store
+.vscode/
+.idea/
