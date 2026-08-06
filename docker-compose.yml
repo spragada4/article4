@@ -1,0 +1,31 @@
+name: article4
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./shared:/app/shared
+      - ./data:/data
+
+  ui:
+    build: ./ui
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+
+  ingestion:
+    build: ./ingestion
+    env_file:
+      - .env
+    volumes:
+      - ./shared:/app/shared
+      - ./data:/data
+    profiles:
+      - ingestion

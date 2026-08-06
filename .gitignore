@@ -1,16 +1,25 @@
+# secrets
 .env
 *.env.local
+
+# python
 __pycache__/
 *.pyc
 .venv/
 venv/
 *.egg-info/
+
+# data
 data/raw/
 data/processed/
 *.jsonl
 *.sqlite
 *.db
+
+# node (if ui ends up needing it)
 node_modules/
+
+# os/editor
 .DS_Store
 .vscode/
 .idea/
