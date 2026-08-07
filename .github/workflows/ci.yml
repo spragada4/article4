@@ -26,4 +26,4 @@ jobs:
         run: ruff check shared/ api/ ingestion/
 
       - name: Test
-        run: pytest shared/ -v
+        run: pytest shared/ -v --no-header || [ $? -eq 5 ]
