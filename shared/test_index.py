@@ -4,6 +4,7 @@ Real tests get filled in during Phase 4 alongside the actual implementation.
 """
 
 import pytest
+
 from shared.index import TwoTierIndex
 
 
