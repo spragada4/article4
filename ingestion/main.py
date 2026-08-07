@@ -19,10 +19,9 @@ def fetch_article4_national() -> pd.DataFrame:
 
 
 def filter_bristol(df: pd.DataFrame) -> pd.DataFrame:
-    # organisation-entity carries a stable reference like "local-authority:BST",
-    # more reliable than fuzzy-matching the organisation name column
-    mask = df["organisation-entity"].astype(str).str.contains("BST", case=False, na=False)
-    return df[mask]
+    # Bristol City Council's entity ID on planning.data.gov.uk is 66
+    # (confirmed via https://www.planning.data.gov.uk/entity/66)
+    return df[df["organisation-entity"] == 66]
 
 
 def normalize(row: pd.Series) -> dict:
