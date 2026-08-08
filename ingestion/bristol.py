@@ -1,14 +1,10 @@
 """
-Ingestion service entrypoint.
-
-Phase 3: pulls the national Article 4 direction bulk dataset from
-planning.data.gov.uk and filters it down to Bristol as the first pilot authority.
+Bristol ingestion: pulls the national Article 4 direction bulk dataset from
+planning.data.gov.uk and filters it down to Bristol.
 """
 
 import json
 from pathlib import Path
-
-import ealing
 
 import pandas as pd
 
@@ -21,13 +17,8 @@ def fetch_article4_national() -> pd.DataFrame:
 
 
 def filter_bristol(df: pd.DataFrame) -> pd.DataFrame:
-    # Bristol City Council's entity ID on planning.data.gov.uk is 66
-    # (confirmed via https://www.planning.data.gov.uk/entity/66)
     return df[df["organisation-entity"] == 66]
 
-def main() -> None:
-    # ... existing Bristol code ...
-    ealing.main()
 
 def normalize(row: pd.Series) -> dict:
     return {
