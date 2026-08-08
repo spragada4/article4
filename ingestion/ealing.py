@@ -32,13 +32,22 @@ def extract_text(pdf_path: Path) -> str:
 
 def extract_schedules(text: str) -> tuple[str, str]:
     first_match = re.search(r"FIRST SCHEDULE(.*?)SECOND SCHEDULE", text, re.DOTALL)
-    second_match = re.search(r"SECOND SCHEDULE(.*?)(?:A copy of the direction|$)", text, re.DOTALL)
+    second_match = re.search(
+        r"SECOND SCHEDULE(.*?)(?:A copy of the direction|Made under the Common Seal|DocuSign|$)",
+        text,
+        re.DOTALL,
+    )
 
     first = first_match.group(1).strip() if first_match else ""
     second = second_match.group(1).strip() if second_match else ""
 
     first = re.sub(r"\s+", " ", first)
     second = re.sub(r"\s+", " ", second)
+
+    # strip any residual unmapped-glyph junk (cid codes from unembedded fonts)
+    first = re.sub(r"\(cid:\d+\)", "", first)
+    second = re.sub(r"\(cid:\d+\)", "", second)
+
     return first, second
 
 
