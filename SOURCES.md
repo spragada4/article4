@@ -37,16 +37,59 @@ Track the exact source for every authority here before writing scraper code.
 
 ## Pilot local authorities
 
-| Authority | Nation | Source | Notes |
-|---|---|---|---|
-| Ealing | England (London) | Confirmed working PDFs (press notices, not the full legal orders):
-  - Non-immediate: https://www.ealing.gov.uk/download/downloads/id/20189/article_4_direction_non-immediate_press_notice.pdf
-  - Immediate (Perivale): https://www.ealing.gov.uk/download/downloads/id/20552/article_4_direction_immediate_perivale_ward_press_notice_confirmed_11_april_2025.pdf
-  2 records, ingested via pdfplumber + FIRST/SECOND SCHEDULE regex extraction in Phase 3. | Use press notices, not the full "order" PDFs — orders include DocuSign signature pages with unmapped font glyphs that pollute extracted text. |
-| Hounslow | England (London) | Confirmed working PDF: https://forms2.hounslow.gov.uk/download/downloads/id/3787/notice.pdf (requires a browser-like User-Agent header — default requests UA gets 403'd). 1 record, ingested via pdfplumber + SCHEDULE-section regex in Phase 3. | Different document structure than Ealing: single "SCHEDULE" heading, not FIRST/SECOND — needed its own extraction logic. There's also a 2021 Brentford Dock direction that was later withdrawn per council records — a good status-tracking case to add later if pursuing that thread further. |
-| Bristol | England | **Structured — best starting point.** National bulk CSV: `https://files.planning.data.gov.uk/dataset/article-4-direction.csv`, filtered by `organisation-entity == 66` (Bristol City Council's entity ID). 16 records, confirmed ingested end-to-end in Phase 3. | Several entries have only boilerplate `description` text (e.g. "Designation made under Article 4 of the Town and Country Planning Act...") rather than a real summary of what's restricted — the actual restriction detail lives only in the linked PDF (`source_url`/`document-url`). Retrieval/LLM synthesis should cite the source link and avoid inventing detail for these thin entries rather than treating the description field as complete. |
-| Cardiff | Wales | Dedicated conservation-area document pages (cardiff.gov.uk/.../Documents/...) have moved/broken since being indexed — direct PDF links 404. Reliable working source instead: Cardiff's council meeting archive (moderngov). Confirmed working PDF: https://cardiff.moderngov.co.uk/documents/s25638/Cabinet%2015%20November%202018%20Llandaff%20Article%204%202%20directions.pdf — a Cabinet report (not a press notice) covering two conservation areas at once, 2 records. | Different document type again: numbered-paragraph committee report, not a schedule-style notice — needed its own extraction pattern. |
-| Gwynedd | Wales | Authoritative source: https://www.gwynedd.llyw.cymru/en/Residents/Planning-and-building-control/Planning/Article-4-Direction.aspx — content verified directly, but as of this writing the site itself has a broken server-side redirect (301s the /en/ path to a /en-gb/ path that 404s, confirmed even with full browser headers). Ingested as a verified static fallback in Phase 3; re-check periodically via the weekly cron and switch to live fetching once fixed. **Status: quashed.** 2024 second-homes direction confirmed, then quashed by the High Court (Sept/Nov 2025), council's final appeal refused 6 Feb 2026 — litigation is over, direction is definitively not in force. | The pilot case that proves the `status` field in the schema is load-bearing, not decorative — this authority is the reason it exists. |
+### Bristol (England) — structured, best starting point
+National bulk CSV: `https://files.planning.data.gov.uk/dataset/article-4-direction.csv`,
+filtered by `organisation-entity == 66` (Bristol City Council's entity ID).
+16 records, confirmed ingested end-to-end in Phase 3.
+
+**Caveat:** several entries have only boilerplate `description` text (e.g. "Designation
+made under Article 4 of the Town and Country Planning Act...") rather than a real summary
+of what's restricted — the actual restriction detail lives only in the linked PDF
+(`document-url`). Retrieval/LLM synthesis should cite the source link and avoid inventing
+detail for these thin entries.
+
+### Ealing (England, London)
+Confirmed working PDFs (press notices, not the full legal orders):
+- Non-immediate: https://www.ealing.gov.uk/download/downloads/id/20189/article_4_direction_non-immediate_press_notice.pdf
+- Immediate (Perivale): https://www.ealing.gov.uk/download/downloads/id/20552/article_4_direction_immediate_perivale_ward_press_notice_confirmed_11_april_2025.pdf
+
+2 records, ingested via pdfplumber + FIRST/SECOND SCHEDULE regex extraction in Phase 3.
+
+**Gotcha:** use press notices, not the full "order" PDFs — orders include DocuSign
+signature pages with unmapped font glyphs that pollute extracted text.
+
+### Hounslow (England, London)
+Confirmed working PDF: https://forms2.hounslow.gov.uk/download/downloads/id/3787/notice.pdf
+(requires a browser-like User-Agent header — default `requests` UA gets 403'd).
+1 record, ingested via pdfplumber + SCHEDULE-section regex in Phase 3.
+
+**Note:** different document structure than Ealing — single "SCHEDULE" heading, not
+FIRST/SECOND — needed its own extraction logic. There's also a 2021 Brentford Dock
+direction that was later withdrawn per council records — a good status-tracking case to
+add later if pursuing that thread further.
+
+### Cardiff (Wales)
+Dedicated conservation-area document pages (cardiff.gov.uk/.../Documents/...) have
+moved/broken since being indexed — direct PDF links 404. Reliable working source instead:
+Cardiff's council meeting archive (moderngov). Confirmed working PDF:
+https://cardiff.moderngov.co.uk/documents/s25638/Cabinet%2015%20November%202018%20Llandaff%20Article%204%202%20directions.pdf
+— a Cabinet report (not a press notice) covering two conservation areas at once, 2 records.
+
+**Note:** different document type again — numbered-paragraph committee report, not a
+schedule-style notice — needed its own extraction pattern.
+
+### Gwynedd (Wales) — the status-tracking case
+Authoritative source:
+https://www.gwynedd.llyw.cymru/en/Residents/Planning-and-building-control/Planning/Article-4-Direction.aspx
+— content verified directly, but as of this writing the site itself has a broken
+server-side redirect (301s the /en/ path to a /en-gb/ path that 404s, confirmed even with
+full browser headers). Ingested as a verified static fallback in Phase 3; re-check
+periodically via the weekly cron and switch to live fetching once fixed.
+
+**Status: quashed.** 2024 second-homes direction confirmed, then quashed by the High
+Court (Sept/Nov 2025), council's final appeal refused 6 Feb 2026 — litigation is over,
+direction is definitively not in force. This is the pilot case that proves the `status`
+field in the schema is load-bearing, not decorative.
 
 ## Recommended ingestion build order
 
