@@ -100,7 +100,7 @@ field in the schema is load-bearing, not decorative.
 
 ## Schema every source gets normalized into
 
-\`\`\`json
+```json
 {
   "id": "string",
   "nation": "england | wales",
@@ -112,4 +112,4 @@ field in the schema is load-bearing, not decorative.
   "text": "string",
   "source_url": "string"
 }
-\`\`\`
+```
